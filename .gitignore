@@ -1,0 +1,6 @@
+.idea
+.env.example
+.directory
+/services/gitlab/*
+/services/registry/auth/*
+/services/runner/config/*

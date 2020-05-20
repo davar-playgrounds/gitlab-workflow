@@ -1,0 +1,45 @@
+version: "3.5"
+services:
+
+  registry:
+    image: registry:2
+    restart: always
+    container_name: registry
+    volumes:
+      - ./services/registry/auth:/auth
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+    ports:
+      - 5000:5000
+
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    restart: always
+    hostname: gitlab.local
+    container_name: gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        registry_external_url 'http://registry:5000'
+    ports:
+      - 480:80
+      - 4443:443
+      - 422:22
+    volumes:
+      - ./services/gitlab/config:/etc/gitlab
+      - ./services/gitlab/logs:/var/log/gitlab
+      - ./services/gitlab/data:/var/opt/gitlab
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    depends_on:
+      - registry
+
+  runner:
+    image: gitlab/gitlab-runner:latest
+    restart: always
+    container_name: runner
+    volumes:
+      - ./services/runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    depends_on:
+      - gitlab
