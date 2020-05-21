@@ -12,7 +12,7 @@ services:
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     ports:
-      - 5000:5000
+      - '5000:5000'
 
   gitlab:
     image: gitlab/gitlab-ce:latest
@@ -22,10 +22,11 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         registry_external_url 'http://registry:5000'
+        gitlab_rails['gitlab_shell_ssh_port'] = 422
     ports:
-      - 480:80
-      - 4443:443
-      - 422:22
+      - '480:80'
+      - '4443:443'
+      - '422:22'
     volumes:
       - ./services/gitlab/config:/etc/gitlab
       - ./services/gitlab/logs:/var/log/gitlab
