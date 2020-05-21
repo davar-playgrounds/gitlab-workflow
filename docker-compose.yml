@@ -13,6 +13,9 @@ services:
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     ports:
       - '5000:5000'
+    networks:
+      default:
+        aliases: ["gitlab-workflow"]
 
   gitlab:
     image: gitlab/gitlab-ce:latest
@@ -34,6 +37,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:rw
     depends_on:
       - registry
+    networks:
+      default:
+        aliases: ["gitlab-workflow"]
 
   runner:
     image: gitlab/gitlab-runner:latest
@@ -43,3 +49,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - gitlab
+    networks:
+      default:
+        aliases: ["gitlab-workflow"]
